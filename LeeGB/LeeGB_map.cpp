@@ -1,43 +1,44 @@
-#include "LeeGB_map.h"
+#include "map.h"
 
-#include <stdio.h>	//디버그용
-#include <stdlib.h> //rand(), srand() 함수
-#include <time.h>	//time(NULL) 사용하기 위해
+#include "define_state.h"
 
-#include "LeeGB_cursor.h"
+#include <stdio.h>		//디버그용
+#include <stdlib.h>		//rand(), srand() 함수
+#include <time.h>		//time(NULL) 사용하기 위해
+
+#include "cursor.h"
+
 
 char mapModel[9][9] =
-	{
-		{1, 0, 1, 0, 0, 0, 1, 0, 1},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 0, 1, 0, 0, 0, 1, 0, 1},
-
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-
-		{1, 0, 1, 0, 0, 0, 1, 0, 1},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 0, 1, 0, 0, 0, 1, 0, 1}};
-
-int *output_random_5_num_arr()
 {
-	int test[10] = {
-		0,
-	};
-	int *num = (int *)malloc(sizeof(int) * 5);
+	{ 1, 0, 1, 0, 0, 0, 1, 0, 1},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{ 1, 0, 1, 0, 0, 0, 1, 0, 1},
+
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
+
+	{ 1, 0, 1, 0, 0, 0, 1, 0, 1},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{ 1, 0, 1, 0, 0, 0, 1, 0, 1}
+};
+
+int* output_random_5_num_arr()
+{
+	int test[10] = { 0, };
+	int *num = (int*)malloc(sizeof(int) * 5);
 	int random_num;
 	int i = 0;
 
 	// 중복된 값을 확인하기 위해 test[10]배열을 만듦
 	// random_num 이 하나 나오면 test배열을 확인
-	// test[random_num]의 값이 1이 아니면
+	// test[random_num]의 값이 1이 아니면 
 	// test[random_num]의 값에 1대입 후 num배열에 random_num 값 추가
 	// num 배열을 다 채울때 까지 위 과정 반복
 
-	while (i < 5)
-	{
-		random_num = (rand() % 9); // 0 ~ 8 중에 랜덤한 수
+	while (i < 5) {
+		random_num = (rand() % 9);		//0 ~ 8 중에 랜덤한 수
 		if (test[random_num] == 0)
 		{
 			test[random_num] = 1;
@@ -46,7 +47,7 @@ int *output_random_5_num_arr()
 		}
 	}
 
-	// 디버그용
+	//디버그용
 	/*for (i = 0; i < 5; ++i)
 		printf(" %d", num[i]);
 	printf("\n");*/
@@ -54,7 +55,7 @@ int *output_random_5_num_arr()
 	return num;
 }
 
-void resetMap() // 왼쪽 위, 왼쪽 아래, 오른쪽 위, 오른쪽 아래 처음 시작할때, 십자가로 움직일 수 있도록 초기화
+void resetMap()				// 왼쪽 위, 왼쪽 아래, 오른쪽 위, 오른쪽 아래 처음 시작할때, 십자가로 움직일 수 있도록 초기화
 {
 	mapModel[1 - 1][1 - 1] = 1;
 	mapModel[1 - 1][1 + 1] = 1;
@@ -77,7 +78,7 @@ void resetMap() // 왼쪽 위, 왼쪽 아래, 오른쪽 위, 오른쪽 아래 처음 시작할때, 십�
 	mapModel[7 + 1][7 + 1] = 1;
 }
 
-void generateMap() // 맵생성
+void generateMap()			//맵생성
 {
 	resetMap();
 
@@ -101,7 +102,7 @@ void generateMap() // 맵생성
 		mapModel[(num[i] / 3)][3 + num[i] % 3] = 1;
 	}
 
-	// 2번구역 채우기
+	//2번구역 채우기
 	num = output_random_5_num_arr();
 	for (int i = 0; i < 5; ++i)
 	{
@@ -109,7 +110,7 @@ void generateMap() // 맵생성
 	}
 	free(num);
 
-	// 5번구역 채우기
+	//5번구역 채우기
 	num = output_random_5_num_arr();
 	for (int i = 0; i < 5; ++i)
 	{
@@ -117,7 +118,7 @@ void generateMap() // 맵생성
 	}
 	free(num);
 
-	// 8번구역 채우기
+	//8번구역 채우기
 	num = output_random_5_num_arr();
 	for (int i = 0; i < 5; ++i)
 	{
@@ -125,7 +126,7 @@ void generateMap() // 맵생성
 	}
 	free(num);
 
-	// 6번구역 채우기
+	//6번구역 채우기
 	num = output_random_5_num_arr();
 	for (int i = 0; i < 5; ++i)
 	{
@@ -133,7 +134,8 @@ void generateMap() // 맵생성
 	}
 	free(num);
 
-	// debug
+
+	//debug
 	/*for (int i = 0; i < 9; ++i) {
 		for (int j = 0; j < 9; ++j)
 			printf(" %d", mapModel[i][j]);
@@ -141,19 +143,16 @@ void generateMap() // 맵생성
 	}*/
 }
 
-void drawMaps() // 맵을 화면에 출력
+void drawMaps()		//맵을 화면에 출력
 {
 	int x, y;
 	int cursX, cursY;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
-	for (y = 0; y < HEIGHT; y++)
-	{
+	for (y = 0; y < HEIGHT; y++) {
 		for (x = 0; x < WIDTH; x++)
 		{
-			cursX = x * 2 + GBOARD_ORIGIN_X; /*GBOARD_ORIGIN_X*/
-			;
-			cursY = y + GBOARD_ORIGIN_Y; /*GBOARD_ORIGIN_Y*/
-			;
+			cursX = x * 2 + GBOARD_ORIGIN_X; /*GBOARD_ORIGIN_X*/;
+			cursY = y + GBOARD_ORIGIN_Y; /*GBOARD_ORIGIN_Y*/;
 
 			SetCurrentCursorPos(cursX, cursY);
 
@@ -161,33 +160,54 @@ void drawMaps() // 맵을 화면에 출력
 			{
 				printf("■");
 			}
-			else
-			{
-				printf("");
-			}
+			else { printf(""); }
 
-			// draw_3_3maps(x, y, cursX, cursY);		//배열의 1칸을 화면의 3*3 크기로 표현
+			//draw_3_3maps(x, y, cursX, cursY);		//배열의 1칸을 화면의 3*3 크기로 표현
 		}
 	}
-	SetCurrentCursorPos((GBOARD_ORIGIN_X /*BOARD_ORIGIN_X*/ + WIDTH * 2 + 1), HEIGHT + 1);
+	SetCurrentCursorPos((GBOARD_ORIGIN_X/*BOARD_ORIGIN_X*/ + WIDTH * 2 + 1), HEIGHT + 1);
 }
 
-void draw_3_3maps(int x, int y, int cursX, int cursY)
+//void draw_3_3maps(int x, int y, int cursX, int cursY)
+//{
+//	for (int yy = 0; yy < 3; ++yy) {
+//		for (int xx = 0; xx < 3; ++xx)
+//		{
+//			SetCurrentCursorPos(cursX + xx * 2, cursY + yy);	//네모 한칸이 커서 2개를 차지하므로 2 * xx를 하며 커서위치 변경
+//
+//			if (mapModel[y][x] == 1)
+//			{
+//				printf("■");
+//			}
+//			else { printf("  "); }
+//		}
+//	}
+//}
+
+int checkObject_can_go(int x, int y)		//인자로 주어진 좌표로 이동할 수 있는지
 {
-	for (int yy = 0; yy < 3; ++yy)
-	{
-		for (int xx = 0; xx < 3; ++xx)
-		{
-			SetCurrentCursorPos(cursX + xx * 2, cursY + yy); // 네모 한칸이 커서 2개를 차지하므로 2 * xx를 하며 커서위치 변경
-
-			if (mapModel[y][x] == 1)
-			{
-				printf("■");
-			}
-			else
-			{
-				printf("  ");
-			}
-		}
-	}
+	if (mapModel[y][x] == state_empty)
+		return (1);
+	if (mapModel[y][x] == state_item_bomb_max || mapModel[y][x] == state_item_bomb_range || mapModel[y][x] == state_item_character_move)
+		return (1);
+	return (0);
 }
+int checkObject_bomb(int x, int y)			//인자로 주어진 좌표가 폭발범위인지
+{
+	if (mapModel[y][x] == state_bomb)
+		return (1);
+	return (0);
+}
+int checkObject_box(int x, int y)			//인자로 주어진 좌표에 부실 수 있는 장애물이 있는지
+{
+	if (mapModel[y][x] == state_box)
+		return (1);
+	return (0);
+}
+int checkObject_wall(int x, int y)			//인자로 주어진 좌표에 부실 수 없는 장애물이 있는지
+{
+	if (mapModel[y][x] == state_wall)
+		return (1);
+	return (0);
+}
+
