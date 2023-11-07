@@ -1,12 +1,12 @@
-#include "map.h"
+#include "LeeGB_map.h"
 
-#include "define_state.h"
+#include "../define_state.h"
 
 #include <stdio.h>		//디버그용
 #include <stdlib.h>		//rand(), srand() 함수
 #include <time.h>		//time(NULL) 사용하기 위해
 
-#include "cursor.h"
+#include "LeeGB_cursor.h"
 
 
 char mapModel[9][9] =
