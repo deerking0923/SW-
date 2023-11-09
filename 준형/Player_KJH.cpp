@@ -1,28 +1,8 @@
 #include <stdio.h>
 #include <windows.h>
-
-#define GBOARD_WIDTH 10
-#define GBOARD_HEIGHT 20
-#define GBOARD_ORIGIN_X 4
-#define GBOARD_ORIGIN_Y 2
-
-int gameBoardInfo[GBOARD_HEIGHT + 1][GBOARD_WIDTH + 2] = { 0 };
-
-#define LEFT 75
-#define RIGHT 77
-#define UP 72
-#define DOWN 80
-
-int block_id;
-int speed;
-int PlayerCurPosX, PlayerCurPosY; // 플레이어 현재 좌표
-int PlayerState = 1;           // 플레이어 현재 상태
-
-typedef struct Player // 플레이어 구조체
-{
-    int Bomb_Count;
-    int Span;
-}Player;
+#include <conio.h>
+#include "Player_KJH.h"
+#include "LeeGB_map.h"
 
 void SetCurrentCursorPos(int x, int y)
 {
@@ -138,16 +118,19 @@ int DetectCollision(int posX, int posY) // 임시로 장애물 GameBoardInfo로 설정하�
 {                              // 맵의 장애물에 맞춰 감지하도록 바꿀 예정
     int x, y;
 
-    int arrX = (posX - GBOARD_ORIGIN_X) / 2;
-    int arrY = posY - GBOARD_ORIGIN_Y;
+    int arrX = posX / 2;
+    int arrY = posY;
 
-    if (gameBoardInfo[arrY][arrX] == 1) // 임시로 gameBoardInfo로 장애물 판단하게 해놨음
-        return 0;
+    /*
+    if (gameBoardInfo[arrY][arrX] == 1)
+        return 0;    
+    */
+    return checkObject_can_go(arrX, arrY);
 
     return 1;
 }
 
-COORD SetPlayerBomb() // 폭탄놓는 함수
+void SetPlayerBomb() // 폭탄놓는 함수
 {
     // 좌표 (PlayerCurPosX, PlayerCurPosY)에 폭탄 놓는 함수
 }
@@ -157,7 +140,7 @@ void CheckPlayerState()
     // 현재 플레이어 좌표의 정보값에 따라 PlayerState 업데이트
     // 업데이트된 PlayerState 값에 맞게 처리
 
-    if (PlayerState = 0)
+    if (PlayerState == 0)
     {
         SetCurrentCursorPos(11, 0);
         puts("Game Over");
@@ -193,52 +176,9 @@ void ProcessKeyInput()
     }
 }
 
-void DrawGameBoard()
-{
-    int x, y;
-    for (y = 0; y <= GBOARD_HEIGHT; y++)
-    {
-        SetCurrentCursorPos(GBOARD_ORIGIN_X, GBOARD_ORIGIN_Y + y);
-        if (y == GBOARD_HEIGHT)
-            printf("└");
-        else
-            printf("│");
-    }
-    for (y = 0; y <= GBOARD_HEIGHT; y++)
-    {
-        SetCurrentCursorPos(GBOARD_ORIGIN_X + (GBOARD_WIDTH + 1) * 2, GBOARD_ORIGIN_Y + y);
-        if (y == GBOARD_HEIGHT)
-            printf("┘");
-        else
-            printf("│");
-    }
-    for (x = 1; x < GBOARD_WIDTH + 1; x++)
-    {
-        SetCurrentCursorPos(GBOARD_ORIGIN_X + x * 2, GBOARD_ORIGIN_Y + GBOARD_HEIGHT);
-        printf("─");
-    }
-
-    PlayerCurPosX = GBOARD_ORIGIN_X + GBOARD_WIDTH;
-    PlayerCurPosY = 0;
-    SetCurrentCursorPos(PlayerCurPosX, PlayerCurPosY);
-}
-
-int main()
+void PlayerControl() // main 함수에 추가하세요
 {
     RemoveCursor();
-    speed = 25;
-
-    DrawGameBoard(); // 임시 장애물
-
-    for (int y = 0; y < GBOARD_HEIGHT; y++)
-    {
-        gameBoardInfo[y][0] = 1;
-        gameBoardInfo[y][GBOARD_WIDTH + 1] = 1;
-    }
-    for (int x = 0; x < GBOARD_WIDTH + 2; x++)
-    {
-        gameBoardInfo[GBOARD_HEIGHT][x] = 1;
-    }
 
     PlayerCurPosX = 10; PlayerCurPosY = 2;
     SetCurrentCursorPos(PlayerCurPosX, PlayerCurPosY);
@@ -249,6 +189,4 @@ int main()
         CheckPlayerState();
         ProcessKeyInput();
     }
-
-    return 0;
 }
