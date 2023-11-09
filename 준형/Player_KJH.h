@@ -19,14 +19,9 @@ typedef struct Player // 플레이어 구조체
     int Span;
 }Player;
 
-void SetCurrentCursorPos(int x, int y);
-
-COORD GetCurrentCursorPos(void);
-
 void ShowPlayerBlock();
 void DeletePlayerBlock();
 
-void RemoveCursor(void);
 
 void PlayerMoveLeft(); // 플레이어 이동 (좌)
 void PlayerMoveRight(); // 플레이어 이동 (우)

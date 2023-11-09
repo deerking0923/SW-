@@ -3,26 +3,7 @@
 #include <conio.h>
 #include "Player_KJH.h"
 #include "LeeGB_map.h"
-
-void SetCurrentCursorPos(int x, int y)
-{
-    COORD pos = { x, y };
-
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-}
-
-COORD GetCurrentCursorPos(void)
-{
-    COORD curPoint;
-
-    CONSOLE_SCREEN_BUFFER_INFO curInfo;
-
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
-    curPoint.X = curInfo.dwCursorPosition.X;
-    curPoint.Y = curInfo.dwCursorPosition.Y;
-
-    return curPoint;
-}
+#include "LeeGB_cursor.h"
 
 void ShowPlayerBlock()
 {
@@ -44,14 +25,6 @@ void DeletePlayerBlock()
     SetCurrentCursorPos(curPos.X, curPos.Y);
     printf("  ");
     SetCurrentCursorPos(curPos.X, curPos.Y);
-}
-
-void RemoveCursor(void)
-{
-    CONSOLE_CURSOR_INFO curInfo;
-    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
-    curInfo.bVisible = 0;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
 }
 
 void PlayerMoveLeft() // 플레이어 이동 (좌)
@@ -121,13 +94,7 @@ int DetectCollision(int posX, int posY) // 임시로 장애물 GameBoardInfo로 설정하�
     int arrX = posX / 2;
     int arrY = posY;
 
-    /*
-    if (gameBoardInfo[arrY][arrX] == 1)
-        return 0;    
-    */
     return checkObject_can_go(arrX, arrY);
-
-    return 1;
 }
 
 void SetPlayerBomb() // 폭탄놓는 함수
@@ -189,4 +156,11 @@ void PlayerControl() // main 함수에 추가하세요
         CheckPlayerState();
         ProcessKeyInput();
     }
+}
+
+int main()
+{
+    PlayerControl();
+
+    return 0;
 }
