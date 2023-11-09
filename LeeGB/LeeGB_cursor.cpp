@@ -1,10 +1,10 @@
-#include "cursor.h"
+#include "LeeGB_cursor.h"
 #include <conio.h>
 #include <Windows.h>
 
 void SetCurrentCursorPos(int x, int y)
 {
-    COORD pos = { x, y };
+    COORD pos = {x, y};
 
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
@@ -30,5 +30,3 @@ void RemoveCursor(void)
     curInfo.bVisible = 0;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &curInfo);
 }
-
-
