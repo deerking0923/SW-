@@ -9,34 +9,43 @@
 #include "LeeGB_cursor.h"
 #include "Test_Moving.h"
 
+int one_srt_dist[101][101];
+int dstX, dstY;
+
 int visited[101][101] = { 0, };
 int weight[101][101] = { 0, };
+
 int front = 0, rear = 0;
-int one_srt_dist[101][101];
 int dx[4] = { 0,1,0,-1 };
 int dy[4] = { 1,0,-1,0 };
 
-void dfs(int x, int y, int npcX, int npcY) {
-	one_srt_dist[y][x] = 1;
+int wx[4] = { 0,1,0,-1 };
+int wy[4] = { 1,0,-1,0 };
+
+int can_Pos = 0;
+
+void dfs(int dstX, int dstY, int npcX, int npcY) {
+
+	one_srt_dist[dstY][dstX] = 1;
 
 	if (one_srt_dist[npcY][npcX] == 1) return;
-	if (y - 1 >= 0 && weight[y - 1][x] < weight[y][x] && one_srt_dist[y - 1][x] == 0
-		&& weight[y - 1][x] != 0) dfs(x, y - 1, npcX, npcY);
+	if (dstY - 1 >= 0 && weight[dstY - 1][dstX] < weight[dstY][dstX] && one_srt_dist[dstY - 1][dstX] == 0
+		&& weight[dstY - 1][dstX] != 0) dfs(dstX, dstY - 1, npcX, npcY);
 
 	if (one_srt_dist[npcY][npcX] == 1) return;
-	if (x - 1 >= 0 && weight[y][x - 1] < weight[y][x] && one_srt_dist[y][x - 1] == 0
-		&& weight[y][x - 1] != 0) dfs(x - 1, y, npcX, npcY);
+	if (dstX - 1 >= 0 && weight[dstY][dstX - 1] < weight[dstY][dstX] && one_srt_dist[dstY][dstX - 1] == 0
+		&& weight[dstY][dstX - 1] != 0) dfs(dstX - 1, dstY, npcX, npcY);
 
 	if (one_srt_dist[npcY][npcX] == 1) return;
-	if (y + 1 < HEIGHT && weight[y + 1][x] < weight[y][x] && one_srt_dist[y + 1][x] == 0
-		&& weight[y + 1][x] != 0) dfs(x, y + 1, npcX, npcY);
+	if (dstY + 1 < HEIGHT && weight[dstY + 1][dstX] < weight[dstY][dstX] && one_srt_dist[dstY + 1][dstX] == 0
+		&& weight[dstY + 1][dstX] != 0) dfs(dstX, dstY + 1, npcX, npcY);
 
 	if (one_srt_dist[npcY][npcX] == 1) return;
-	if (x + 1 < WIDTH && weight[y][x + 1] < weight[y][x] && one_srt_dist[y][x + 1] == 0
-		&& weight[y][x + 1] != 0) dfs(x + 1, y, npcX, npcY);
+	if (dstX + 1 < WIDTH && weight[dstY][dstX + 1] < weight[dstY][dstX] && one_srt_dist[dstY][dstX + 1] == 0
+		&& weight[dstY][dstX + 1] != 0) dfs(dstX + 1, dstY, npcX, npcY);
 }
 
-void bfs(Queue* q, int x, int y, int dstX, int dstY) {
+void bfs(Queue* q, int x, int y) {
 
 	rear++;
 	q[rear].x = x;
@@ -56,18 +65,38 @@ void bfs(Queue* q, int x, int y, int dstX, int dstY) {
 					q[rear].dist = q[front].dist + 1;
 					visited[ny][nx] = 1;
 					weight[ny][nx] = q[rear].dist;
+
+					int cnt = 0;
+					for (int j = 0; j < 4; j++) {
+						if (nx + wx[j] < 0) {
+							continue;
+						}
+						if (nx + wx[j] >= WIDTH) {
+							continue;
+						}
+						if (ny + wy[j] < 0) {
+							continue;
+						}
+						if (ny + wy[j] >= HEIGHT) {
+							continue;
+						}
+						if (mapModel[ny + wy[j]][nx + wx[j]] == 1) {
+							cnt++;
+						}
+					}
+					if (cnt > can_Pos) {
+						can_Pos = cnt;
+						dstX = nx;
+						dstY = ny;
+					}
 				}
 			}
-		}
-		if (visited[dstY][dstX] == 1) { // 목표 위치의 visited의 좌표가 x좌표, y좌표가 1이면 bfs를 멈춤
-			break;
 		}
 	}
 }
 
-int ShortestDistance(int npcX, int npcY, int dstX, int dstY) {
+int ShortestDistance(int npcX, int npcY) {
 
-	//printf("[%d %d]", npcX, npcY);
 	Queue* q = (Queue*)calloc(((WIDTH + 1) * (HEIGHT + 1)), sizeof(Queue));
 
 	for (int i = 0; i < HEIGHT; i++) {
@@ -77,13 +106,17 @@ int ShortestDistance(int npcX, int npcY, int dstX, int dstY) {
 			visited[i][j] = 0;
 		}
 	}
-	weight[npcY][npcX] = 0;
 	front = rear = 0;
-	bfs(q, npcX, npcY, dstX, dstY); // 여기에 NPC의 (x,y)좌표를 집어넣는다.
+	can_Pos = 0;
+	weight[npcY][npcX] = 0;
+	//printf("\n\n[%d %d]", npcX, npcY);
+	bfs(q, npcX, npcY); // 여기에 NPC의 출발(x,y)좌표를 집어넣는다.
+
 	weight[npcY][npcX] = 1;
 	int dist = q[rear].dist;
 	free(q);
 
+	//printf("%d",flag);
 	dfs(dstX, dstY, npcX, npcY);
 
 	for (int i = 0; i < WIDTH; i++) {
@@ -96,5 +129,16 @@ int ShortestDistance(int npcX, int npcY, int dstX, int dstY) {
 			}
 		}
 	}
+
+	//printf("\n\n");
+	//for (int i = 0; i < 9; i++) {
+	//	for (int j = 0; j < 9; j++) {
+	//		//printf("%2d",one_srt_dist[i][j]);
+	//		//printf("%2d", visited[i][j]);
+	//		//printf("%3d", weight[i][j]);
+	//	}
+	//	printf("\n");
+	//}
+
 	return dist;
 }
