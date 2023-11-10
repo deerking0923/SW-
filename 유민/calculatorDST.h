@@ -5,6 +5,9 @@
 #include "LeeGB_map.h"
 
 extern int one_srt_dist[101][101];
+extern int dstX, dstY;
+extern int visited[101][101];
+extern int weight[101][101];
 
 typedef struct queue {
 	int x;
@@ -12,8 +15,8 @@ typedef struct queue {
 	int dist;
 }Queue;
 
-void bfs(Queue* q, int x, int y, int dstX, int dstY);
+void bfs(Queue* q, int x, int y);
 void dfs(int x, int y, int npcX, int npcY);
-int ShortestDistance(int npcX, int npcY, int dstX, int dstY);
+int ShortestDistance(int npcX, int npcY);
 
 #endif
